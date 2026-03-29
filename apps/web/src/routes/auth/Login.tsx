@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { signIn } from '../../lib/supabase';
+import { useAuthStore } from '../../stores/authStore';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { initialize } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -17,11 +19,13 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
-      if (error) {
-        setError(error.message);
+      const { error: signInError } = await signIn(email, password);
+      if (signInError) {
+        setError(signInError.message);
       } else {
-        navigate('/quests');
+        await initialize();
+        const { isParent } = useAuthStore.getState();
+        navigate(isParent ? '/parent/dashboard' : '/quests');
       }
     } catch (err) {
       setError('An unexpected error occurred');
