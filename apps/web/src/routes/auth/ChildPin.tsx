@@ -26,7 +26,6 @@ const ChildPin: React.FC = () => {
     setError('');
     setLoading(true);
     try {
-      // Look up child by display_name
       const { data: children, error: lookupError } = await supabase
         .from('children')
         .select('*')
@@ -38,8 +37,6 @@ const ChildPin: React.FC = () => {
       }
       const child = children[0];
 
-      // Verify PIN - simple check (PIN stored as pin_hash)
-      // For now, try the verify-child-pin edge function, fallback to direct compare
       try {
         const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-child-pin', {
           body: { child_id: child.id, pin },
@@ -49,21 +46,18 @@ const ChildPin: React.FC = () => {
           return;
         }
       } catch {
-        // If edge function doesn't exist, check if pin matches directly
         if (child.pin_hash !== pin) {
           setError('Wrong PIN. Try again.');
           return;
         }
       }
 
-      // Fetch family
       const { data: family } = await supabase
         .from('families')
         .select('*')
         .eq('id', child.family_id)
         .single();
 
-      // Store child session
       useAuthStore.setState({
         childSession: child,
         family: family,
@@ -102,7 +96,7 @@ const ChildPin: React.FC = () => {
       <div className="flex justify-center gap-3">
         {[0, 1, 2, 3].map((i) => (
           <div key={i} className="w-14 h-14 rounded-lg bg-secondary border-2 border-accent-gold flex items-center justify-center text-2xl font-bold text-accent-gold">
-            {pin[i] ? '\u2022' : ''}
+            {pin[i] ? '•' : ''}
           </div>
         ))}
       </div>
@@ -133,7 +127,7 @@ const ChildPin: React.FC = () => {
           onClick={handleBackspace}
           className="p-4 rounded-lg bg-secondary text-accent-pink font-bold text-xl border border-accent-pink/50 hover:bg-secondary/80 transition-all"
         >
-          \u2190
+          ←
         </button>
       </div>
 
