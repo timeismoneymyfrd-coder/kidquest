@@ -22,3 +22,16 @@ export const supabase = createClient(
     },
   }
 );
+
+
+export const signIn = (email: string, password: string) => {
+    return supabase.auth.signInWithPassword({ email, password });
+};
+
+export const signUp = (email: string, password: string, role?: string) => {
+    return supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { role: role || 'parent' } },
+    });
+};
