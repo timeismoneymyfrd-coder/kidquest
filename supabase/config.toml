@@ -1,0 +1,37 @@
+# Supabase Local Development Configuration
+project_id = "kidquest_local"
+region = "us-east-1"
+
+[api]
+port = 54321
+schemas = ["public", "graphql_public"]
+default_schema = "public"
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+shadow_port = 54320
+
+[studio]
+port = 54323
+
+[inbucket]
+port = 54324
+
+[storage]
+file_size_limit = 52428800
+
+[auth]
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:5173/**"]
+jwt_expiry = 3600
+jwt_secret = "super-secret-jwt-token-with-at-least-32-characters-long"
+enable_signup = true
+email_rate_limit = 5
+sms_auth_enabled = false
+mfa_enabled = false
+
+[functions]
+import_map = "./functions/import_map.json"
+verify_jwt = true
