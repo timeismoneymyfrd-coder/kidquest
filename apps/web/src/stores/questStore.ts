@@ -16,6 +16,7 @@ interface QuestStore {
   setFilter: (filter: QuestType | 'all') => void;
   setStatusFilter: (filter: QuestStatus | 'all') => void;
   updateQuestLocally: (questId: string, updates: Partial<Quest>) => void;
+  getFilteredQuests: () => Quest[];
 }
 
 export const useQuestStore = create<QuestStore>((set, get) => ({
@@ -99,5 +100,14 @@ export const useQuestStore = create<QuestStore>((set, get) => ({
         q.id === questId ? { ...q, ...updates } : q
       ),
     }));
+  },
+
+  getFilteredQuests: () => {
+    const { quests, filter, statusFilter } = get();
+    return quests.filter((q) => {
+      if (filter !== 'all' && q.type !== filter) return false;
+      if (statusFilter !== 'all' && q.status !== statusFilter) return false;
+      return true;
+    });
   },
 }));
