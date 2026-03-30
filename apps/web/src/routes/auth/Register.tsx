@@ -79,46 +79,16 @@ const Register: React.FC = () => {
             onClick={() => setStep('role')}
             className="text-sm text-accent-cyan hover:underline"
           >
-            ← Back
+            \u2190 Back
           </button>
 
           <h2 className="text-xl font-display font-bold text-center">Create Parent Account</h2>
 
-          <Input
-            label="Your Name"
-            type="text"
-            value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
-            required
-          />
-          <Input
-            label="Family Name"
-            type="text"
-            value={familyName}
-            onChange={(e) => setFamilyName(e.target.value)}
-            required
-          />
-          <Input
-            label="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Input
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Input
-            label="Confirm Password"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
+          <Input label="Your Name" type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} required />
+          <Input label="Family Name" type="text" value={familyName} onChange={(e) => setFamilyName(e.target.value)} required />
+          <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <Input label="Confirm Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
 
           {error && (
             <div className="p-3 bg-accent-pink/10 border border-accent-pink/50 rounded-lg text-accent-pink text-sm">
@@ -126,19 +96,13 @@ const Register: React.FC = () => {
             </div>
           )}
 
-          <Button
-            type="submit"
-            className="w-full rpg-button"
-            loading={loading}
-          >
+          <Button type="submit" className="w-full rpg-button" loading={loading}>
             Create Account
           </Button>
 
           <p className="text-center text-sm text-gray-400">
             Already have an account?{' '}
-            <Link to="/login" className="text-accent-cyan hover:underline">
-              Sign in
-            </Link>
+            <Link to="/login" className="text-accent-cyan hover:underline">Sign in</Link>
           </p>
         </form>
       )}
