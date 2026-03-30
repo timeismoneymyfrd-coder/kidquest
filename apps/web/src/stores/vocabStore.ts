@@ -9,6 +9,7 @@ interface VocabStore {
   loading: boolean;
 
   fetchDueCards: (childId: string) => Promise<void>;
+  fetchAllCards: (childId: string) => Promise<void>;
   answerCard: (cardId: string, correct: boolean) => Promise<void>;
   nextCard: () => void;
   resetQueue: () => void;
@@ -58,6 +59,18 @@ export const useVocabStore = create<VocabStore>((set, get) => ({
       .limit(20);
 
     if (data) set({ reviewQueue: data, currentIndex: 0 });
+    set({ loading: false });
+  },
+
+  fetchAllCards: async (childId) => {
+    set({ loading: true });
+    const { data } = await supabase
+      .from('vocab_cards')
+      .select('*')
+      .eq('child_id', childId)
+      .order('created_at', { ascending: false });
+
+    if (data) set({ cards: data, reviewQueue: data, currentIndex: 0 });
     set({ loading: false });
   },
 
