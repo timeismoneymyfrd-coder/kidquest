@@ -32,9 +32,11 @@ const ChildPin: React.FC = () => {
     setLoading(true);
 
     try {
-      // Sign out any stale session first so we use anon role
+      // Sign out any existing session so we query as anon role
+      // This ensures the children_anon_select policy (qual: true) is used
       await supabase.auth.signOut();
 
+      // Look up child by display_name
       const { data: children, error: lookupError } = await supabase
         .from('children')
         .select('*')
@@ -54,24 +56,28 @@ const ChildPin: React.FC = () => {
 
       const child = children[0];
 
+      // Verify PIN - compare directly (pin_hash stored as plain text for now)
       if (child.pin_hash !== pin) {
-        setError('Wrong PIN. Please try again.');
+        setError('Wrong PIN. Try again.');
         setPin('');
         setLoading(false);
         return;
       }
 
+      // Fetch family info
       const { data: family } = await supabase
         .from('families')
         .select('*')
         .eq('id', child.family_id)
         .single();
 
+      // Set child session in store
       useAuthStore.getState().childSession = child;
       useAuthStore.getState().family = family;
       useAuthStore.getState().isChild = true;
       useAuthStore.getState().isParent = false;
 
+      // Persist child session
       localStorage.setItem(
         'kidquest_child_session',
         JSON.stringify({ childId: child.id, familyId: child.family_id })
@@ -89,6 +95,7 @@ const ChildPin: React.FC = () => {
     <div className="glass-panel p-6 space-y-6">
       <h2 className="text-2xl font-display font-bold text-center">Child Login</h2>
 
+      {/* Name Input */}
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-1">Your Name</label>
         <input
@@ -100,13 +107,14 @@ const ChildPin: React.FC = () => {
         />
       </div>
 
+      {/* PIN Display */}
       <div className="flex justify-center gap-3">
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
             className="w-14 h-14 rounded-lg bg-secondary border-2 border-accent-gold flex items-center justify-center text-2xl font-bold text-accent-gold"
           >
-            {pin[i] ? '•' : ''}
+            {pin[i] ? '●' : ''}
           </div>
         ))}
       </div>
@@ -117,6 +125,7 @@ const ChildPin: React.FC = () => {
         </div>
       )}
 
+      {/* PIN Pad */}
       <div className="grid grid-cols-3 gap-3">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
           <button
