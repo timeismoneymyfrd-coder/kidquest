@@ -11,9 +11,7 @@ const ChildPin: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handlePinInput = (digit: string) => {
-    if (pin.length < 4) {
-      setPin(prev => prev.length < 4 ? prev + digit : prev);
-    }
+    setPin(prev => prev.length < 4 ? prev + digit : prev);
   };
 
   const handleBackspace = () => {
@@ -108,7 +106,7 @@ const ChildPin: React.FC = () => {
             key={i}
             className="w-14 h-14 rounded-lg bg-secondary border-2 border-accent-gold flex items-center justify-center text-2xl font-bold text-accent-gold"
           >
-            {pin[i] ? '\u2022' : ''}
+            {pin[i] ? '•' : ''}
           </div>
         ))}
       </div>
@@ -142,7 +140,7 @@ const ChildPin: React.FC = () => {
           onClick={handleBackspace}
           className="p-4 rounded-lg bg-secondary text-accent-pink font-bold text-xl border border-accent-pink/50 hover:bg-secondary/80 transition-all"
         >
-          \u2190
+          ←
         </button>
       </div>
 
