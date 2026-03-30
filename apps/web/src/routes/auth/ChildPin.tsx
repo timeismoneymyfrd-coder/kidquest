@@ -12,12 +12,12 @@ const ChildPin: React.FC = () => {
 
   const handlePinInput = (digit: string) => {
     if (pin.length < 4) {
-      setPin(pin + digit);
+      setPin(prev => prev.length < 4 ? prev + digit : prev);
     }
   };
 
   const handleBackspace = () => {
-    setPin(pin.slice(0, -1));
+    setPin(prev => prev.slice(0, -1));
   };
 
   const handleSubmit = async () => {
@@ -34,6 +34,9 @@ const ChildPin: React.FC = () => {
     setLoading(true);
 
     try {
+      // Sign out any stale session first so we use anon role
+      await supabase.auth.signOut();
+
       const { data: children, error: lookupError } = await supabase
         .from('children')
         .select('*')
