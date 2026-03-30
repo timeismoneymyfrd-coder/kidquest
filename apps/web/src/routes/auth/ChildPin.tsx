@@ -32,23 +32,26 @@ const ChildPin: React.FC = () => {
     setLoading(true);
 
     try {
-      // Sign out any existing session so we query as anon role
-      // This ensures the children_anon_select policy (qual: true) is used
-      await supabase.auth.signOut();
+      // Use direct REST call with anon key to bypass any authenticated session.
+      // The Supabase client may have a parent session active, which would
+      // filter children by family_id via RLS. Using the anon key directly
+      // ensures the children_anon_select policy (qual: true) is used.
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-      // Look up child by display_name
-      const { data: children, error: lookupError } = await supabase
-        .from('children')
-        .select('*')
-        .ilike('display_name', name.trim());
+      const childResp = await fetch(
+        `${supabaseUrl}/rest/v1/children?select=*&display_name=ilike.${encodeURIComponent(name.trim())}`,
+        { headers: { 'apikey': anonKey, 'Authorization': `Bearer ${anonKey}` } }
+      );
+      const children = await childResp.json();
 
-      if (lookupError) {
+      if (!childResp.ok || !Array.isArray(children)) {
         setError('Something went wrong. Please try again.');
         setLoading(false);
         return;
       }
 
-      if (!children || children.length === 0) {
+      if (children.length === 0) {
         setError('Child not found. Check the name and try again.');
         setLoading(false);
         return;
@@ -56,7 +59,7 @@ const ChildPin: React.FC = () => {
 
       const child = children[0];
 
-      // Verify PIN - compare directly (pin_hash stored as plain text for now)
+      // Verify PIN
       if (child.pin_hash !== pin) {
         setError('Wrong PIN. Try again.');
         setPin('');
@@ -64,12 +67,16 @@ const ChildPin: React.FC = () => {
         return;
       }
 
-      // Fetch family info
-      const { data: family } = await supabase
-        .from('families')
-        .select('*')
-        .eq('id', child.family_id)
-        .single();
+      // Fetch family info (also via anon key)
+      const famResp = await fetch(
+        `${supabaseUrl}/rest/v1/families?select=*&id=eq.${child.family_id}`,
+        { headers: { 'apikey': anonKey, 'Authorization': `Bearer ${anonKey}` } }
+      );
+      const families = await famResp.json();
+      const family = families?.[0] || null;
+
+      // Sign out any existing parent session (best-effort, don't block on failure)
+      try { await supabase.auth.signOut(); } catch (_) { /* ignore */ }
 
       // Set child session in store
       useAuthStore.getState().childSession = child;
