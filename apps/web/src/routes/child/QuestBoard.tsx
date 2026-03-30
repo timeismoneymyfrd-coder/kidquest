@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuestStore } from '../../stores/questStore';
 import QuestCard from '../../components/quest/QuestCard';
 import Badge from '../../components/ui/Badge';
@@ -7,45 +7,45 @@ const QuestBoard: React.FC = () => {
   const quests = useQuestStore((state) => state.quests);
   const filter = useQuestStore((state) => state.filter);
   const setFilter = useQuestStore((state) => state.setFilter);
-  const filtered = useQuestStore((state) => state.getFilteredQuests());
+  const filtered = useQuestStore((state) => {
+    const f = state.filter;
+    const sf = state.statusFilter;
+    return state.quests.filter((q) => {
+      if (f !== 'all' && q.type !== f) return false;
+      if (sf !== 'all' && q.status !== sf) return false;
+      return true;
+    });
+  });
 
   // Mock data for demo
+  const now = new Date().toISOString();
   const mockQuests = [
     {
-      id: '1',
-      family_id: '1',
-      title: 'Read a book chapter',
-      description: 'Read Chapter 3 of your favorite book',
-      type: 'learning' as const,
-      status: 'active' as const,
-      xp_reward: 50,
-      coin_reward: 25,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      id: '1', family_id: '1', child_id: '1', title: 'Read a book chapter',
+      description: 'Read Chapter 3 of your favorite book', type: 'learning' as const,
+      status: 'active' as const, difficulty: 2, estimated_minutes: 20,
+      xp_reward: 50, coin_reward: 25, bonus_multiplier: 1, source: 'system' as const,
+      verification: 'parent' as const, verification_config: {}, submission: null,
+      parent_rating: null, child_fun_rating: null, child_difficulty_rating: null,
+      scheduled_for: now.slice(0, 10), time_slot: null, due_at: null, completed_at: null, created_at: now,
     },
     {
-      id: '2',
-      family_id: '1',
-      title: 'Clean your room',
-      description: 'Organize and clean your room',
-      type: 'chore' as const,
-      status: 'pending' as const,
-      xp_reward: 30,
-      coin_reward: 15,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      id: '2', family_id: '1', child_id: '1', title: 'Clean your room',
+      description: 'Organize and clean your room', type: 'chore' as const,
+      status: 'pending' as const, difficulty: 1, estimated_minutes: 15,
+      xp_reward: 30, coin_reward: 15, bonus_multiplier: 1, source: 'parent' as const,
+      verification: 'photo' as const, verification_config: {}, submission: null,
+      parent_rating: null, child_fun_rating: null, child_difficulty_rating: null,
+      scheduled_for: now.slice(0, 10), time_slot: null, due_at: null, completed_at: null, created_at: now,
     },
     {
-      id: '3',
-      family_id: '1',
-      title: 'Do 10 push-ups',
-      description: 'Complete 10 push-ups for exercise',
-      type: 'exercise' as const,
-      status: 'active' as const,
-      xp_reward: 40,
-      coin_reward: 20,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      id: '3', family_id: '1', child_id: '1', title: 'Do 10 push-ups',
+      description: 'Complete 10 push-ups for exercise', type: 'exercise' as const,
+      status: 'active' as const, difficulty: 3, estimated_minutes: 10,
+      xp_reward: 40, coin_reward: 20, bonus_multiplier: 1, source: 'system' as const,
+      verification: 'timer' as const, verification_config: {}, submission: null,
+      parent_rating: null, child_fun_rating: null, child_difficulty_rating: null,
+      scheduled_for: now.slice(0, 10), time_slot: null, due_at: null, completed_at: null, created_at: now,
     },
   ];
 
