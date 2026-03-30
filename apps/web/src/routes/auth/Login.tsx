@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { signIn } from '../../lib/supabase';
 import { useAuthStore } from '../../stores/authStore';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { initialize } = useAuthStore();
+  const { signIn } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -19,16 +18,10 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const { error: signInError } = await signIn(email, password);
-      if (signInError) {
-        setError(signInError.message);
-      } else {
-        await initialize();
-        const { isParent } = useAuthStore.getState();
-        navigate(isParent ? '/parent/dashboard' : '/quests');
-      }
-    } catch (err) {
-      setError('An unexpected error occurred');
+      await signIn(email, password);
+      navigate('/parent/dashboard');
+    } catch (err: any) {
+      setError(err?.message || 'An unexpected error occurred');
     } finally {
       setLoading(false);
     }
@@ -36,6 +29,8 @@ const Login: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit} className="glass-panel p-6 space-y-4">
+      <h2 className="text-2xl font-display font-bold text-center mb-2">Parent Login</h2>
+
       <Input
         label="Email"
         type="email"
@@ -65,12 +60,19 @@ const Login: React.FC = () => {
         Sign In
       </Button>
 
-      <p className="text-center text-sm text-gray-400">
-        Don't have an account?{' '}
-        <Link to="/register" className="text-accent-cyan hover:underline">
-          Sign up
-        </Link>
-      </p>
+      <div className="text-center space-y-2">
+        <p className="text-sm text-gray-400">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-accent-cyan hover:underline">
+            Sign up
+          </Link>
+        </p>
+        <p className="text-sm text-gray-400">
+          <Link to="/child-pin" className="text-accent-gold hover:underline">
+            Child login with PIN
+          </Link>
+        </p>
+      </div>
     </form>
   );
 };
