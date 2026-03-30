@@ -34,20 +34,20 @@ const Profile: React.FC = () => {
           .select('*', { count: 'exact', head: 0 })
           .eq('child_id', childSession.id)
           .eq('status', 'rewarded');
-        
+
         // Get learned vocab count
         const { count: vocabCount } = await supabase
           .from('vocab_cards')
           .select('*', { count: 'exact', head: 0 })
           .eq('child_id', childSession.id)
           .gte('srs_level', 2);
-        
+
         // Get unlocked achievements count
         const { count: achievementCount } = await supabase
           .from('child_achievements')
           .select('*', { count: 'exact', head: 0 })
           .eq('child_id', childSession.id);
-         
+
         setStats({
           questsCompleted: questCount || 0,
           wordsLearned: vocabCount || 0,
@@ -79,7 +79,7 @@ const Profile: React.FC = () => {
 
       {/* Avatar and Stats */}
       <Card className="p-8 text-center">
-        <div className="text-8xl mb-4">àŸ‘¤</div>
+        <div className="text-8xl mb-4">ğŸ‘¤</div>
         <h3 className="text-2xl font-display font-bold mb-6">
           {childSession?.display_name || 'Adventure Hero'}
         </h3>
@@ -100,12 +100,12 @@ const Profile: React.FC = () => {
         </div>
       </Card>
 
-      {/* Stats Grid  */}
+      {/* Stats Grid */}
       {!loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <Card className="p-4 text-center">
             <p className="text-2xl mb-2">ğŸ“š</p>
-            <p className="text-xs text-gray-400">Hests Done</p>
+            <p className="text-xs text-gray-400">Quests Done</p>
             <p className="text-2xl font-bold text-accent-cyan">{stats.questsCompleted}</p>
           </Card>
           <Card className="p-4 text-center">
@@ -116,7 +116,7 @@ const Profile: React.FC = () => {
           <Card className="p-4 text-center">
             <p className="text-2xl mb-2">ğŸ†</p>
             <p className="text-xs text-gray-400">Achievements</p>
-            <p className="text-2xl font-bold text-accent-gold">{stats.achieVementsUnlocked}</p>
+            <p className="text-2xl font-bold text-accent-gold">{stats.achievementsUnlocked}</p>
           </Card>
         </div>
       ) : (
@@ -127,7 +127,7 @@ const Profile: React.FC = () => {
       {streak > 0 && (
         <Card className="p-6">
           <div className="flex items-center gap-4">
-            <span className="text-5xl">ğŸ”¥¥ÎğŸ”¥</span>
+            <span className="text-5xl">ğŸ”¥</span>
             <div>
               <p className="text-sm text-gray-400">Awesome Streak!</p>
               <p className="text-2xl font-bold text-accent-pink">{streak} days in a row</p>
