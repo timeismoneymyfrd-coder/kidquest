@@ -1,56 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useVocabStore } from '../../stores/vocabStore';
+import { useAuthStore } from '../../stores/authStore';
 import FlashCard from '../../components/vocab/FlashCard';
 import SRSProgress from '../../components/vocab/SRSProgress';
 import Card from '../../components/ui/Card';
 
 const VocabArena: React.FC = () => {
-  const { cards, reviewQueue, currentCardIndex, nextCard, setCards, setReviewQueue } = useVocabStore();
+  const childSession = useAuthStore((state) => state.childSession);
+  const reviewQueue = useVocabStore((state) => state.reviewQueue);
+  const currentIndex = useVocabStore((state) => state.currentIndex);
+  const loading = useVocabStore((state) => state.loading);
+  const fetchDueCards = useVocabStore((state) => state.fetchDueCards);
+  const answerCard = useVocabStore((state) => state.answerCard);
+  const nextCard = useVocabStore((state) => state.nextCard);
   const [reviewCount, setReviewCount] = useState(0);
 
-  // Mock vocab cards
-  const mockCards = [
-    {
-      id: '1',
-      family_id: '1',
-      word: 'å …æŒ',
-      pinyin: 'jiÄnchÃ­',
-      english: 'perseverance',
-      example_sentence: 'æˆåŠŸéœ€è¦å …æŒå’ŒåŠªåŠ›ã€‚',
-      difficulty_level: 3,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      family_id: '1',
-      word: 'å†’éšª',
-      pinyin: 'mÃ oxiÇŽn',
-      english: 'adventure',
-      example_sentence: 'æ¯å€‹è‹±é›„éƒ½å–œæ­¡å†’éšªã€‚',
-      difficulty_level: 2,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: '3',
-      family_id: '1',
-      word: 'å‹‡æ°£',
-      pinyin: 'yÇ’ngqÃ¬',
-      english: 'courage',
-      example_sentence: 'ä½ éœ€è¦å‹‡æ°£ä¾†é¢å°æŒ‘æˆ°ã€‚',
-      difficulty_level: 2,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
-
-  React.useEffect(() => {
-    if (cards.length === 0 && mockCards.length > 0) {
-      setCards(mockCards);
-      setReviewQueue(mockCards.map((c) => c.id));
+  useEffect(() => {
+    if (childSession?.id) {
+      fetchDueCards(childSession.id);
     }
-  }, [cards, setCards, setReviewQueue]);
+  }, [childSession?.id, fetchDueCards]);
+
+  if (loading && reviewQueue.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <p className="text-lg text-gray-400">Loading vocabulary cards...</p>
+      </div>
+    );
+  }
 
   if (reviewQueue.length === 0) {
     return (
@@ -66,7 +43,18 @@ const VocabArena: React.FC = () => {
     );
   }
 
-  const currentCard = cards[currentCardIndex];
+  const currentCard = reviewQueue[currentIndex];
+
+  const handleAnswer = async (correct: boolean) => {
+    if (currentCard) {
+      await answerCard(currentCard.id, correct);
+      setReviewCount(reviewCount + 1);
+
+      if (currentIndex < reviewQueue.length - 1) {
+        nextCard();
+      }
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -80,23 +68,28 @@ const VocabArena: React.FC = () => {
 
       {currentCard && (
         <FlashCard
-          vocab={currentCard}
-          onReview={(difficulty) => {
-            setReviewCount(reviewCount + 1);
-            if (currentCardIndex < reviewQueue.length - 1) {
-              nextCard();
-            }
-          }}
+          card={currentCard}
+          onAnswer={handleAnswer}
         />
       )}
 
       <Card className="p-4 text-center">
         <p className="text-sm text-gray-400">
-          Card {currentCardIndex + 1} of {reviewQueue.length}
+          Card {currentIndex + 1} of {reviewQueue.length}
         </p>
       </Card>
     </div>
-  );
-};
-
-export default VocabArena;
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+  9Ž
+j–8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8(€€<æ8
